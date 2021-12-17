@@ -1,1 +1,9 @@
 data
+user-*.py
+
+pywikibot.lwp
+throttle.ctrl
+
+.idea
+apicache-py3
+venv
