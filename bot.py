@@ -1,10 +1,4 @@
-import json
-
 import pywikibot
-
-
-def build_lexeme(lexical_category, lemma):
-    return json.dumps({"type": "lexeme", "language": "Q25167", "lexicalCategory": lexical_category, "lemmas": {'br': {"language": "br", "value": lemma}}})
 
 
 def create_lexeme(site, lexeme):
