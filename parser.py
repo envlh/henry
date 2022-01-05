@@ -68,6 +68,8 @@ def main():
 
     lexemes = []
     lexemes_error = []
+    monograms = {}
+    bigrams = {}
 
     page_number = 1
 
@@ -116,18 +118,33 @@ def main():
                 lexical_category = ref_lexical_categories[parsed_lexical_category]
 
                 lexeme = build_lexeme(lemma, lexical_category, forms, dialects, page_number)
-                out.write('{},{},{},{},{}\n'.format(lemma, lexical_category, forms, dialects, page_number))
                 lexemes.append(lexeme)
+
+                out.write('{},{},{},{},{}\n'.format(lemma, lexical_category, forms, dialects, page_number))
+
+                for c in lemma:
+                    if c not in monograms:
+                        monograms[c] = 0
+                    monograms[c] += 1
+                for (a, b) in zip(lemma[0::2], lemma[1::2]):
+                    if (a + b) not in bigrams:
+                        bigrams[a + b] = 0
+                    bigrams[a + b] += 1
 
             output = re.search(r'(?i)^{{nr\|', line)
             if output is not None:
                 page_number += 1
 
-    print('{} lexemes'.format(len(lexemes)))
     with open('data/{}/lexemes_{}.json'.format(conf['iteration'], conf['iteration']), 'w', encoding='utf-8') as myfile:
-        myfile.write(json.dumps(lexemes))
+        json.dump(lexemes, myfile, ensure_ascii=False)
     with open('data/{}/errors_{}.json'.format(conf['iteration'], conf['iteration']), 'w', encoding='utf-8') as myfile:
-        myfile.write(json.dumps(lexemes_error))
+        json.dump(lexemes_error, myfile, ensure_ascii=False)
+    with open('data/{}/monograms_{}.json'.format(conf['iteration'], conf['iteration']), 'w', encoding='utf-8') as myfile:
+        json.dump(monograms, myfile, ensure_ascii=False)
+    with open('data/{}/bigrams_{}.json'.format(conf['iteration'], conf['iteration']), 'w', encoding='utf-8') as myfile:
+        json.dump(bigrams, myfile, ensure_ascii=False)
+
+    print('{} lexemes'.format(len(lexemes)))
 
 
 if __name__ == '__main__':
