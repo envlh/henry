@@ -63,6 +63,9 @@ def build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number):
     # gender (P5185)
     if gender is not None:
         lexeme['claims']['P5185'] = [{'mainsnak': {'snaktype': 'value', 'property': 'P5185', 'datavalue': {'value': {'entity-type': "item", 'numeric-id': gender[1:], 'id': gender}, "type": "wikibase-entityid"}, "datatype": "wikibase-item"}, "type": "statement", "rank": "normal"}]
+    # reconstructed word (P31)
+    if lemma[0] == '*':
+        lexeme['claims']['P31'] = [{'mainsnak': {'snaktype': 'value', "'property": "P31", 'datavalue': {'value': {'entity-type': 'item', 'numeric-id': 55074511, 'id': 'Q55074511'}, 'type': 'wikibase-entityid'}, 'datatype': 'wikibase-item'}, 'type': 'statement', 'rank': 'normal'}]
     return lexeme
 
 
