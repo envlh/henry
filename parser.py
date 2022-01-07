@@ -40,6 +40,12 @@ def build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number):
                 cl.append({'mainsnak': {'snaktype': 'value', 'property': 'P7481', 'datavalue': {'value': {'entity-type': 'item', 'numeric-id': dialect[1:], 'id': dialect}, 'type': 'wikibase-entityid'}, 'datatype': 'wikibase-item'}, 'type': 'statement', 'rank': 'normal'})
             claims['P7481'] = cl
         form = {'representations': {'br': {'language': 'br', 'value': f}}, 'grammaticalFeatures': [], 'claims': claims, 'add': ''}
+        # positive for adjectives
+        if lexical_category == 'Q34698':
+            form['grammaticalFeatures'] = ['Q3482678']
+        # infinitive for verbs
+        elif lexical_category == 'Q24905':
+            form['grammaticalFeatures'] = ['Q179230']
         lexeme['forms'].append(form)
     # described by source (P1343)
     first_letter = normalize_lemma(lemma)[:1]
