@@ -1,3 +1,4 @@
 mwparserfromhell
 pywikibot
 requests
+unidecode

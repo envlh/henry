@@ -2,10 +2,11 @@ import re
 import urllib.parse
 import requests
 import json
+import unidecode
 
 
 def normalize_lemma(lemma):
-    return re.sub(r'[^a-z]', '', lemma)
+    return re.sub(r'[^a-z]', '', unidecode.unidecode(lemma))
 
 
 def get_existing_lemmas(user_agent):
