@@ -42,14 +42,21 @@ def build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number):
         form = {'representations': {'br': {'language': 'br', 'value': f}}, 'grammaticalFeatures': [], 'claims': claims}
         lexeme['forms'].append(form)
     # described by source (P1343)
+    first_letter = normalize_lemma(lemma)[:1]
+    if lemma[:3] == 'c\'h':
+        first_letter = 'c\'h'
+    elif lemma[:2] == 'ch':
+        first_letter = 'ch'
+    first_letter = first_letter.upper()
     lexeme['claims'] = {
         'P1343': [{
             'mainsnak': {'snaktype': 'value', 'property': 'P1343', 'datavalue': {'value': {'entity-type': 'item', 'numeric-id': 19216625, 'id': 'Q19216625'}, 'type': 'wikibase-entityid'}, 'datatype': 'wikibase-item'},
             'type': 'statement',
             'qualifiers': {
                 'P304': [{'snaktype': 'value', 'property': 'P304', 'datavalue': {'value': page_number, 'type': 'string'}, 'datatype': 'string'}],
+                'P953': [{'snaktype': 'value', 'property': 'P953', 'datavalue': {'value': 'https://fr.wikisource.org/wiki/Lexique_%C3%A9tymologique_du_breton_moderne/{}#{}'.format(first_letter, page_number), 'type': 'string'}, 'datatype': 'url'}],
             },
-            'qualifiers-order': ['P304'],
+            'qualifiers-order': ['P304', 'P953'],
             'rank': 'normal'
         }]
     }
