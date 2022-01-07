@@ -30,7 +30,7 @@ def file_get_contents(filename):
 
 
 def build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number):
-    lexeme = {'type': 'lexeme', 'language': 'Q25167', 'lemmas': {'br': {'language': 'br', 'value': lemma}}, 'lexicalCategory': lexical_category, 'forms': []}
+    lexeme = {'type': 'lexeme', 'language': 'Q12107', 'lemmas': {'br': {'language': 'br', 'value': lemma}}, 'lexicalCategory': lexical_category, 'forms': []}
     # forms + dialect / variety of form (P7481)
     for f in forms:
         claims = {}
@@ -39,7 +39,7 @@ def build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number):
             for dialect in dialects:
                 cl.append({'mainsnak': {'snaktype': 'value', 'property': 'P7481', 'datavalue': {'value': {'entity-type': 'item', 'numeric-id': dialect[1:], 'id': dialect}, 'type': 'wikibase-entityid'}, 'datatype': 'wikibase-item'}, 'type': 'statement', 'rank': 'normal'})
             claims['P7481'] = cl
-        form = {'representations': {'br': {'language': 'br', 'value': f}}, 'grammaticalFeatures': [], 'claims': claims}
+        form = {'representations': {'br': {'language': 'br', 'value': f}}, 'grammaticalFeatures': [], 'claims': claims, 'add': ''}
         lexeme['forms'].append(form)
     # described by source (P1343)
     first_letter = normalize_lemma(lemma)[:1]
@@ -53,7 +53,7 @@ def build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number):
             'mainsnak': {'snaktype': 'value', 'property': 'P1343', 'datavalue': {'value': {'entity-type': 'item', 'numeric-id': 19216625, 'id': 'Q19216625'}, 'type': 'wikibase-entityid'}, 'datatype': 'wikibase-item'},
             'type': 'statement',
             'qualifiers': {
-                'P304': [{'snaktype': 'value', 'property': 'P304', 'datavalue': {'value': page_number, 'type': 'string'}, 'datatype': 'string'}],
+                'P304': [{'snaktype': 'value', 'property': 'P304', 'datavalue': {'value': str(page_number), 'type': 'string'}, 'datatype': 'string'}],
                 'P953': [{'snaktype': 'value', 'property': 'P953', 'datavalue': {'value': 'https://fr.wikisource.org/wiki/Lexique_%C3%A9tymologique_du_breton_moderne/{}#{}'.format(first_letter, page_number), 'type': 'string'}, 'datatype': 'url'}],
             },
             'qualifiers-order': ['P304', 'P953'],
@@ -62,7 +62,7 @@ def build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number):
     }
     # gender (P5185)
     if gender is not None:
-        lexeme['claims']['P5185'] = [{'mainsnak': {'snaktype': 'value', 'property': 'P5185', 'datavalue': {'value': {'entity-type': "item", 'numeric-id': gender[1:], 'id': gender}, "type": "wikibase-entityid"}, "datatype": "wikibase-item"}, "type": "statement", "rank": "normal"}]
+        lexeme['claims']['P5185'] = [{'mainsnak': {'snaktype': 'value', 'property': 'P5185', 'datavalue': {'value': {'entity-type': "item", 'numeric-id': int(gender[1:]), 'id': gender}, "type": "wikibase-entityid"}, "datatype": "wikibase-item"}, "type": "statement", "rank": "normal"}]
     # reconstructed word (P31)
     if lemma[0] == '*':
         lexeme['claims']['P31'] = [{'mainsnak': {'snaktype': 'value', "'property": "P31", 'datavalue': {'value': {'entity-type': 'item', 'numeric-id': 55074511, 'id': 'Q55074511'}, 'type': 'wikibase-entityid'}, 'datatype': 'wikibase-item'}, 'type': 'statement', 'rank': 'normal'}]
