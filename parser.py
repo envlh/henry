@@ -30,7 +30,7 @@ def file_get_contents(filename):
     return s
 
 
-def build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number):
+def build_lexeme(lemma, lexical_category, gender, number, forms, dialects, page_number):
     lexeme = {'type': 'lexeme', 'language': 'Q12107', 'lemmas': {'br': {'language': 'br', 'value': lemma}}, 'lexicalCategory': lexical_category, 'forms': []}
     # forms + dialect / variety of form (P7481)
     for f in forms:
@@ -47,6 +47,9 @@ def build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number):
         # infinitive for verbs
         elif lexical_category == 'Q24905':
             form['grammaticalFeatures'] = ['Q179230']
+        # number for nouns
+        elif lexical_category == 'Q1084' and number is not None:
+            form['grammaticalFeatures'] = [number]
         lexeme['forms'].append(form)
     # described by source (P1343)
     first_letter = normalize_lemma(lemma)[:1]
@@ -81,6 +84,7 @@ def main():
     conf = load_json_file('conf/general.json')
     ref_lexical_categories = load_json_file('conf/lexical_categories.json')
     ref_genders = load_json_file('conf/genders.json')
+    ref_numbers = load_json_file('conf/numbers.json')
     ref_dialects = load_json_file('conf/dialects.json')
 
     # already existing
@@ -104,7 +108,7 @@ def main():
     page_number = 1
 
     with open('data/{}/lexemes_{}.txt'.format(conf['iteration'], conf['iteration']), 'w', encoding='utf-8') as out:
-        out.write('lemma,lexical_category,gender,forms,dialects,page_number\n')
+        out.write('lemma,lexical_category,gender,number,forms,dialects,page_number\n')
 
         for line in lines:
 
@@ -156,10 +160,15 @@ def main():
                 if parsed_lexical_category in ref_genders:
                     gender = ref_genders[parsed_lexical_category]
 
-                lexeme = build_lexeme(lemma, lexical_category, gender, forms, dialects, page_number)
+                # NUMBER
+                number = None
+                if parsed_lexical_category in ref_numbers:
+                    number = ref_numbers[parsed_lexical_category]
+
+                lexeme = build_lexeme(lemma, lexical_category, gender, number, forms, dialects, page_number)
                 lexemes.append(lexeme)
 
-                out.write('{},{},{},{},{}\n'.format(lemma, lexical_category, gender, forms, dialects, page_number))
+                out.write('{},{},{},{},{},{},{}\n'.format(lemma, lexical_category, gender, number, forms, dialects, page_number))
 
                 for c in lemma:
                     if c not in monograms:
