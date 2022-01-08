@@ -1,4 +1,5 @@
 {
-  "iteration": 10,
-  "user_agent": "Henry 1.4 (User:Envlh)"
+  "iteration": 11,
+  "user_agent": "Henry 1.4 (User:Envlh)",
+  "done_filepath": "data/lemmas_done.json"
 }

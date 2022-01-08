@@ -1,8 +1,9 @@
-import re
-import urllib.parse
-import requests
 import json
+import os.path
+import re
+import requests
 import unidecode
+import urllib.parse
 
 
 def normalize_lemma(lemma):
@@ -82,7 +83,15 @@ def main():
     ref_genders = load_json_file('conf/genders.json')
     ref_dialects = load_json_file('conf/dialects.json')
 
+    # already existing
     existing_lemmas = get_existing_lemmas(conf['user_agent'])
+
+    # aleary imported
+    if os.path.isfile(conf['done_filepath']):
+        done = load_json_file(conf['done_filepath'])
+        done = [normalize_lemma(x) for x in done]
+    else:
+        done = []
 
     content = file_get_contents('data/{}/stripped_{}.txt'.format(conf['iteration'], conf['iteration']))
     lines = content.split('\n')
@@ -113,8 +122,12 @@ def main():
                 forms = [x.strip() for x in forms]
                 # do not compute already existing lemmas
                 lemma = forms[0]
-                if normalize_lemma(lemma) in existing_lemmas:
+                nl = normalize_lemma(lemma)
+                if nl in existing_lemmas:
                     lexemes_error.append({lemma: 'already existing in Wikidata'})
+                    continue
+                if nl in done:
+                    lexemes_error.append({lemma: 'already imported'})
                     continue
 
                 # DEFINITION
