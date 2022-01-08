@@ -30,7 +30,7 @@ def file_get_contents(filename):
     return s
 
 
-def build_lexeme(lemma, lexical_category, gender, number, forms, dialects, page_number):
+def build_lexeme(lemma, lexical_category, gender, number, forms, dialects, page_number, stated_as):
     lexeme = {'type': 'lexeme', 'language': 'Q12107', 'lemmas': {'br': {'language': 'br', 'value': lemma}}, 'lexicalCategory': lexical_category, 'forms': []}
     # forms + dialect / variety of form (P7481)
     for f in forms:
@@ -65,8 +65,9 @@ def build_lexeme(lemma, lexical_category, gender, number, forms, dialects, page_
             'qualifiers': {
                 'P304': [{'snaktype': 'value', 'property': 'P304', 'datavalue': {'value': str(page_number), 'type': 'string'}, 'datatype': 'string'}],
                 'P953': [{'snaktype': 'value', 'property': 'P953', 'datavalue': {'value': 'https://fr.wikisource.org/wiki/Lexique_%C3%A9tymologique_du_breton_moderne/{}#{}'.format(first_letter, page_number), 'type': 'string'}, 'datatype': 'url'}],
+                "P1932": [{'snaktype': 'value', 'property': 'P1932', 'datavalue': {'value': stated_as, 'type': 'string'}, 'datatype': 'string'}],
             },
-            'qualifiers-order': ['P304', 'P953'],
+            'qualifiers-order': ['P304', 'P953', 'P1932'],
             'rank': 'normal'
         }]
     }
@@ -119,9 +120,9 @@ def main():
             if output is not None:
 
                 # LEMMA and FORMS
-                forms = output.group(1).strip().lower()
+                stated_as = output.group(1).strip()
                 # removing definition number
-                forms = re.sub(r'^[0-9]+ ', '', forms)
+                forms = re.sub(r'^[0-9]+ ', '', stated_as.lower())
                 forms = forms.split(',')
                 forms = [x.strip() for x in forms]
                 # do not compute already existing lemmas
@@ -165,7 +166,7 @@ def main():
                 if parsed_lexical_category in ref_numbers:
                     number = ref_numbers[parsed_lexical_category]
 
-                lexeme = build_lexeme(lemma, lexical_category, gender, number, forms, dialects, page_number)
+                lexeme = build_lexeme(lemma, lexical_category, gender, number, forms, dialects, page_number, stated_as)
                 lexemes.append(lexeme)
 
                 out.write('{},{},{},{},{},{},{}\n'.format(lemma, lexical_category, gender, number, forms, dialects, page_number))
