@@ -7,12 +7,13 @@ import random
 
 def create_lexeme(site, lexeme):
     request = {
-        "action": "wbeditentity",
-        "format": "json",
-        "new": "lexeme",
-        "summary": "[[:d:Wikidata:Requests for permissions/Bot/EnvlhBot 1|Henry import]]",
-        "token": site.tokens['edit'],
-        "data": lexeme,
+        'action': 'wbeditentity',
+        'format': 'json',
+        'new': 'lexeme',
+        'summary': '[[:d:Wikidata:Requests for permissions/Bot/EnvlhBot 1|Henry import]]',
+        'token': site.tokens['edit'],
+        'bot': '1',
+        'data': lexeme,
     }
     site._simple_request(**request).submit()
 
