@@ -26,22 +26,25 @@ def get_site():
 
 def main():
     conf = parser.load_json_file('conf/general.json')
+    site = get_site()
     todo_filepath = 'data/lexemes_todo.json'
     done = parser.load_json_file(conf['done_filepath'])
     if os.path.isfile(todo_filepath):
         lexemes = parser.load_json_file(todo_filepath)
     else:
         lexemes = parser.load_json_file('data/{}/lexemes_{}.json'.format(conf['iteration'], conf['iteration']))
-    lexeme = lexemes.pop(random.randrange(len(lexemes)))
-    lexeme_str = json.dumps(lexeme)
-    print(lexeme_str)
-    done.append(lexeme['lemmas']['br']['value'])
-    with open(conf['done_filepath'], 'w', encoding='utf-8') as myfile:
-        json.dump(done, myfile, ensure_ascii=False)
-    with open(todo_filepath, 'w', encoding='utf-8') as myfile:
-        json.dump(lexemes, myfile, ensure_ascii=False)
-    site = get_site()
-    create_lexeme(site, lexeme_str)
+    for i in range(0, 100):
+        if len(lexemes) < 1:
+            break
+        lexeme = lexemes.pop(random.randrange(len(lexemes)))
+        lexeme_str = json.dumps(lexeme, ensure_ascii=False)
+        print(lexeme_str)
+        done.append(lexeme['lemmas']['br']['value'])
+        with open(conf['done_filepath'], 'w', encoding='utf-8') as myfile:
+            json.dump(done, myfile, ensure_ascii=False)
+        with open(todo_filepath, 'w', encoding='utf-8') as myfile:
+            json.dump(lexemes, myfile, ensure_ascii=False)
+        create_lexeme(site, lexeme_str)
 
 
 if __name__ == '__main__':
