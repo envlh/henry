@@ -25,10 +25,9 @@ def get_site():
 
 
 def main():
-    conf = parser.load_json_file('conf/general.json')
     site = get_site()
+    conf = parser.load_json_file('conf/general.json')
     todo_filepath = 'data/lexemes_todo.json'
-    done = parser.load_json_file(conf['done_filepath'])
     if os.path.isfile(todo_filepath):
         lexemes = parser.load_json_file(todo_filepath)
     else:
@@ -39,9 +38,6 @@ def main():
         lexeme = lexemes.pop(random.randrange(len(lexemes)))
         lexeme_str = json.dumps(lexeme, ensure_ascii=False)
         print(lexeme_str)
-        done.append(lexeme['lemmas']['br']['value'])
-        with open(conf['done_filepath'], 'w', encoding='utf-8') as myfile:
-            json.dump(done, myfile, ensure_ascii=False)
         with open(todo_filepath, 'w', encoding='utf-8') as myfile:
             json.dump(lexemes, myfile, ensure_ascii=False)
         create_lexeme(site, lexeme_str)

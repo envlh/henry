@@ -1,5 +1,4 @@
 import json
-import os.path
 import re
 import requests
 import unidecode
@@ -10,14 +9,14 @@ def normalize_lemma(lemma):
     return re.sub(r'[^a-z]', '', unidecode.unidecode(lemma))
 
 
-def get_existing_lemmas(user_agent):
-    url = 'https://query.wikidata.org/sparql?{}'.format(urllib.parse.urlencode({'query': 'SELECT DISTINCT ?lemma { [] wikibase:lemma ?lemma ; dct:language wd:Q12107 }', 'format': 'json'}))
+def get_existing_entries(user_agent):
+    url = 'https://query.wikidata.org/sparql?{}'.format(urllib.parse.urlencode({'query': 'SELECT DISTINCT (REPLACE(?statedAs, "’", "\'") AS ?statedAs) { ?lexeme p:P1343 [ ps:P1343 wd:Q19216625 ; pq:P1932 ?statedAs ] . }', 'format': 'json'}))
     raw = requests.get(url, headers={'User-Agent': user_agent}).content
     res = json.loads(raw)['results']['bindings']
-    existing_lemmas = []
+    existing_entries = []
     for value in res:
-        existing_lemmas.append(normalize_lemma(value['lemma']['value']))
-    return existing_lemmas
+        existing_entries.append(value['statedAs']['value'])
+    return existing_entries
 
 
 def load_json_file(filename):
@@ -89,14 +88,7 @@ def main():
     ref_dialects = load_json_file('conf/dialects.json')
 
     # already existing
-    existing_lemmas = get_existing_lemmas(conf['user_agent'])
-
-    # aleary imported
-    if os.path.isfile(conf['done_filepath']):
-        done = load_json_file(conf['done_filepath'])
-        done = [normalize_lemma(x) for x in done]
-    else:
-        done = []
+    existing_entries = get_existing_entries(conf['user_agent'])
 
     content = file_get_contents('data/{}/stripped_{}.txt'.format(conf['iteration'], conf['iteration']))
     lines = content.split('\n')
@@ -119,21 +111,19 @@ def main():
             output = re.search(r'^\'\'\'(.*?)\'\'\'(.*)', line)
             if output is not None:
 
-                # LEMMA and FORMS
+                # STATED AS (entry label)
                 stated_as = output.group(1).strip()
+                if stated_as in existing_entries:
+                    lexemes_error.append({lemma: 'entry "{}" already used in Wikidata'.format(stated_as)})
+                    continue
+
+                # LEMMA and FORMS
                 # removing definition number
                 forms = re.sub(r'^[0-9]+ ', '', stated_as.lower())
                 forms = forms.split(',')
                 forms = [x.strip() for x in forms]
                 # do not compute already existing lemmas
                 lemma = forms[0]
-                nl = normalize_lemma(lemma)
-                if nl in existing_lemmas:
-                    lexemes_error.append({lemma: 'already existing in Wikidata'})
-                    continue
-                if nl in done:
-                    lexemes_error.append({lemma: 'already imported'})
-                    continue
 
                 # DEFINITION
                 definition = output.group(2)
