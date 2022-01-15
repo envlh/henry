@@ -64,7 +64,7 @@ def build_lexeme(lemma, lexical_category, gender, number, forms, dialects, page_
             'qualifiers': {
                 'P304': [{'snaktype': 'value', 'property': 'P304', 'datavalue': {'value': str(page_number), 'type': 'string'}, 'datatype': 'string'}],
                 'P953': [{'snaktype': 'value', 'property': 'P953', 'datavalue': {'value': 'https://fr.wikisource.org/wiki/Lexique_%C3%A9tymologique_du_breton_moderne/{}#{}'.format(first_letter, page_number), 'type': 'string'}, 'datatype': 'url'}],
-                "P1932": [{'snaktype': 'value', 'property': 'P1932', 'datavalue': {'value': stated_as, 'type': 'string'}, 'datatype': 'string'}],
+                'P1932': [{'snaktype': 'value', 'property': 'P1932', 'datavalue': {'value': stated_as, 'type': 'string'}, 'datatype': 'string'}],
             },
             'qualifiers-order': ['P304', 'P953', 'P1932'],
             'rank': 'normal'
@@ -72,10 +72,10 @@ def build_lexeme(lemma, lexical_category, gender, number, forms, dialects, page_
     }
     # gender (P5185)
     if gender is not None:
-        lexeme['claims']['P5185'] = [{'mainsnak': {'snaktype': 'value', 'property': 'P5185', 'datavalue': {'value': {'entity-type': "item", 'numeric-id': int(gender[1:]), 'id': gender}, "type": "wikibase-entityid"}, "datatype": "wikibase-item"}, "type": "statement", "rank": "normal"}]
+        lexeme['claims']['P5185'] = [{'mainsnak': {'snaktype': 'value', 'property': 'P5185', 'datavalue': {'value': {'entity-type': 'item', 'numeric-id': int(gender[1:]), 'id': gender}, 'type': 'wikibase-entityid'}, 'datatype': 'wikibase-item'}, 'type': 'statement', 'rank': 'normal'}]
     # reconstructed word (P31)
     if lemma[0] == '*':
-        lexeme['claims']['P31'] = [{'mainsnak': {'snaktype': 'value', "'property": "P31", 'datavalue': {'value': {'entity-type': 'item', 'numeric-id': 55074511, 'id': 'Q55074511'}, 'type': 'wikibase-entityid'}, 'datatype': 'wikibase-item'}, 'type': 'statement', 'rank': 'normal'}]
+        lexeme['claims']['P31'] = [{'mainsnak': {'snaktype': 'value', 'property': 'P31', 'datavalue': {'value': {'entity-type': 'item', 'numeric-id': 55074511, 'id': 'Q55074511'}, 'type': 'wikibase-entityid'}, 'datatype': 'wikibase-item'}, 'type': 'statement', 'rank': 'normal'}]
     return lexeme
 
 
