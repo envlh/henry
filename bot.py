@@ -29,9 +29,12 @@ def main():
     conf = parser.load_json_file('conf/general.json')
     todo_filepath = 'data/lexemes_todo.json'
     if os.path.isfile(todo_filepath):
+        print('Resuming import with todo file {}'.format(todo_filepath))
         lexemes = parser.load_json_file(todo_filepath)
     else:
-        lexemes = parser.load_json_file('data/{}/lexemes_{}.json'.format(conf['iteration'], conf['iteration']))
+        lexemes_filepath = 'data/{}/lexemes_{}.json'.format(conf['iteration'], conf['iteration'])
+        print('Starting new import with lexemes file {}'.format(lexemes_filepath))
+        lexemes = parser.load_json_file(lexemes_filepath)
     for i in range(0, 100):
         if len(lexemes) < 1:
             break
