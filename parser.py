@@ -114,7 +114,7 @@ def main():
                 # STATED AS (entry label)
                 stated_as = output.group(1).strip()
                 if stated_as in existing_entries:
-                    lexemes_error.append({lemma: 'entry "{}" already used in Wikidata'.format(stated_as)})
+                    lexemes_error.append({stated_as: 'entry already used in Wikidata'})
                     continue
 
                 # LEMMA and FORMS
@@ -129,7 +129,7 @@ def main():
                 definition = output.group(2)
                 match = re.search(r'^( \([CLTV., ]+\))?, ([a-zéè\' .]+)', definition)
                 if match is None:
-                    lexemes_error.append({lemma: 'unable to parse definition'})
+                    lexemes_error.append({stated_as: 'unable to parse definition'})
                     continue
                 # DIALECTS
                 dialects = match.group(1)
@@ -142,7 +142,7 @@ def main():
                 # LEXICOGRAPHICAL CATEGORY
                 parsed_lexical_category = match.group(2).strip()
                 if parsed_lexical_category not in ref_lexical_categories:
-                    lexemes_error.append({lemma: 'unknown lexical category ({})'.format(parsed_lexical_category)})
+                    lexemes_error.append({stated_as: 'unknown lexical category ({})'.format(parsed_lexical_category)})
                     continue
                 lexical_category = ref_lexical_categories[parsed_lexical_category]
 
